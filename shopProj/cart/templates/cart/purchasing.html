@@ -1,0 +1,92 @@
+{% extends 'home/base.html' %}
+{% block content %}
+<h1>Purchase List</h1>
+<div>
+    {% for product in cart_prods %}
+    <h4>
+        {{ product.title }} - price: {{ product.price }}
+    </h4>
+    <div class="row justify-content-center">
+        <div class="col-md-2">Quantity:</div>
+        <div class="col-md-2">
+            <select class="form-select form-select-sm"
+                    id="select{{ product.id }}">
+
+                    {% for key, val in quantities.items %}
+                        {% if key == product.id|slugify %}
+                           <option selected> {{ val }} </option>
+                        {% endif %}
+                    {% endfor %}
+
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn btn-secondary update-cart" data-index="{{ product.id }}" type="button">Update</button>
+    <button class="btn btn-danger delete-product" data-index="{{ product.id }}" type="button">Delete</button>
+
+    {% empty %}
+    <p>
+        Your cart is MT
+    </p>
+    {% endfor %}
+</div>
+
+<script>
+    // Update the cart
+    $(document).on('click', '.update-cart', function(e){
+        e.preventDefault();
+         // grab the product_id
+         var productid = $(this).data('index');
+         let product_qty = $('#select' + productid).val();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart:cart_update' %}',
+            data: {
+                product_id: productid,
+                product_qty: product_qty,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+
+            success: function(json){
+                console.log(json)
+                console.log("SPAN:", document.getElementById("cart_quantity"));
+                console.log("QTY:", json.qty);
+            },
+
+            error: function(xhr, errmsg, err){}
+        });
+    })
+</script>
+
+<script>
+    // Delete items
+    $(document).on('click', '.delete-product', function(e){
+        e.preventDefault();
+
+         // grab the product_id
+         var productid = $(this).data('index');
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart:cart_delete' %}',
+            data: {
+                product_id: productid,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+
+            success: function(json){
+                location.reload();
+            },
+
+            error: function(xhr, errmsg, err){}
+        });
+    })
+</script>
+
+{% endblock %}

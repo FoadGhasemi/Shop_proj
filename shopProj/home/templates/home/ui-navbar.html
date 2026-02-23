@@ -1,0 +1,54 @@
+{% load static %}
+<nav class="navbar navbar-example navbar-expand-lg bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="javascript:void(0)">Navbar</a>
+        <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbar-ex-4"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar-ex-4">
+            <div class="navbar-nav me-auto">
+                <a class="nav-item nav-link active" href="{% url 'home:home' %}">Home</a>
+                <a class="nav-item nav-link" href="javascript:void(0)">About</a>
+                <a class="nav-item nav-link" href="javascript:void(0)">Contact</a>
+            </div>
+
+            <a href="{% url 'cart:cart_list' %}">basket</a>
+            <span id="cart_quantity">
+        {{ cart|length }}
+            </span>
+
+            {% if user.profile.image %}
+            <img src="{{ user.profile.image.url }}" width="30" height="30" alt="the image is not available">
+            {% else %}
+            <img src="{% static 'product/images/default.jpg' %}" alt="the image is not available">
+            {% endif %}
+            {% if user.is_authenticated %}
+            <a href="{% url 'user:logout' %}">logout</a>
+            <a href="{% url 'user:profile' %}">profile</a>
+            {% else %}
+            <a href="{% url 'user:login' %}">login</a>
+            <a href="{% url 'user:register' %}">register</a>
+            {% endif %}
+
+            <!-- Search -->
+            <form class="d-flex" method="GET" action="{% url 'product:search' %}">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="tf-icons bx bx-search"></i></span>
+                    <input type="search" class="form-control" placeholder="Search..." name="q"
+                           value="{{request.GET.q}}"/>
+                    <button class="btn btn-outline-primary" type="submit">
+                        Search
+                    </button>
+                </div>
+            </form>
+            <!-- /Search -->
+
+        </div>
+    </div>
+</nav>

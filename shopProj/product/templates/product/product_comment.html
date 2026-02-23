@@ -1,0 +1,14 @@
+{% extends 'home/base.html' %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <div>
+        {{ form.body.label_tag}}
+        {{ form.body}}
+        {{ form.body.errors}}
+    </div>
+    <div>
+        <button type="submit">Save</button>
+    </div>
+</form>
+{% endblock %}
